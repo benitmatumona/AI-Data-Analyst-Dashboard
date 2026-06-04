@@ -1,11 +1,11 @@
-import statistics
+import pandas as pd
 
-def resopnse(scores: list[int]) -> dict[str, int]:
+
+def analyze_csv(csv_path: str) -> dict:
+    
+    df = pd.read_csv(csv_path)
     return {
-        "student_count": len(scores),
-        "highest_score": max(scores),
-        "average_score": round(statistics.mean(scores), 2)   
+        "student_count": len(df),
+        "highest_score": df["Score"].max(),
+        "average_score": round(df["Score"].mean(), 2)
     }
-
-
-print(resopnse(scores = [80, 95, 70, 60]))
