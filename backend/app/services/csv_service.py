@@ -6,10 +6,11 @@ def analyze_csv(csv_path: str) -> dict:
     try:
         df = pd.read_csv(csv_path)
     except Exception as e:
-        {
+        return {
             "success": False,
             "error found": f"error trying to read the file {e}"
         }
+
     numeric_df = df.select_dtypes(include="number")
     numeric_columns = numeric_df.columns.to_list()
 
@@ -18,13 +19,14 @@ def analyze_csv(csv_path: str) -> dict:
                 "success": False,
                 "error found": "no numeric coloumns found"
         }
+    
     return {
             "success": True,
             "rows": len(df.index),
             "columns": len(df.columns),
             "numeric_columns": numeric_columns,
             "summary": get_summary(df, numeric_columns),
-            "preview": df.head().to_dict()
+            "preview": df.head(7).to_dict(orient="records")
     } 
 
 
