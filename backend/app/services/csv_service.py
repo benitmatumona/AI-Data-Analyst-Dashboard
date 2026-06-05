@@ -13,7 +13,7 @@ def analyze_csv(csv_path: str) -> dict:
     if df.empty:
         return {
                 "success": False,
-                "error": "The dataset contains no rows"
+                "error": "The dataset is empty"
         }
 
     numeric_df = df.select_dtypes(include="number")
@@ -22,7 +22,7 @@ def analyze_csv(csv_path: str) -> dict:
     if not numeric_columns:
         return {
                 "success": False,
-                "error": "no numeric coloumns found"
+                "error": "no numeric columns found"
         }
     
     return {
@@ -35,21 +35,21 @@ def analyze_csv(csv_path: str) -> dict:
     } 
 
 
-def get_summary(df: pd.DataFrame, coloumns: list[str])->dict[str, int|float]:
+def get_summary(df: pd.DataFrame, columns: list[str])->dict[str, dict[str, int|float]]:
     """
         accepts a csv loaded by pandas as the first argument and 
-        numeric coloumns as the second and returns a summary
+        numeric columns as the second and returns a summary
     """
     summary = {}
     
-    for coloumn in coloumns:
-        df_not_null = df[coloumn].dropna()
-        summary[coloumn] = {
+    for column in columns:
+        df_not_null = df[column].dropna()
+        summary[column] = {
                 "count": df_not_null.count(),
                 "mean": round(df_not_null.mean(), 2),
                 "min": df_not_null.min(),
                 "max": df_not_null.max(),
                 "median": df_not_null.median(),
-                "number of miising data": df[coloumn].isna().sum()
+                "number of miising data": df[column].isna().sum()
             } 
     return summary
