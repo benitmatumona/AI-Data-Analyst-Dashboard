@@ -1,14 +1,7 @@
 import pandas as pd
 
 
-def analyze_csv(csv_path: str) -> dict:
-    try:
-        df = pd.read_csv(csv_path)
-    except Exception as e:
-        return {
-            "success": False,
-            "error": f"error trying to read the file {e}"
-        }
+def analyze_csv(df: pd.DataFrame) -> dict:
 
     if df.empty:
         return {
@@ -19,11 +12,6 @@ def analyze_csv(csv_path: str) -> dict:
     numeric_df = df.select_dtypes(include="number")
     numeric_columns = numeric_df.columns.to_list()
 
-    if not numeric_columns:
-        return {
-                "success": False,
-                "error": "no numeric columns found"
-        }
     
     return {
             "success": True,
@@ -53,3 +41,12 @@ def get_summary(df: pd.DataFrame, columns: list[str])->dict[str, dict[str, int|f
                 "number of miising data": df[column].isna().sum()
             } 
     return summary
+
+
+# try:
+#     df = pd.read_csv(csv_path)
+# except Exception as e:
+#     {
+#         "success": False,
+#         "error": f"error trying to read the file {e}"
+#     }
