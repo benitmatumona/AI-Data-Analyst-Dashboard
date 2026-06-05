@@ -1,5 +1,4 @@
 import pandas as pd
-from pandas.api.types import is_numeric_dtype
 
 
 def analyze_csv(csv_path: str) -> dict:
@@ -8,16 +7,16 @@ def analyze_csv(csv_path: str) -> dict:
     except Exception as e:
         return {
             "success": False,
-            "error found": f"error trying to read the file {e}"
+            "error": f"error trying to read the file {e}"
         }
 
     numeric_df = df.select_dtypes(include="number")
     numeric_columns = numeric_df.columns.to_list()
 
-    if not numeric_columns:
+    if not numeric_columns or numeric_df.empty:
         return {
                 "success": False,
-                "error found": "no numeric coloumns found"
+                "error": "no numeric coloumns found"
         }
     
     return {
