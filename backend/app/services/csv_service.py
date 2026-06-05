@@ -10,10 +10,16 @@ def analyze_csv(csv_path: str) -> dict:
             "error": f"error trying to read the file {e}"
         }
 
+    if df.empty:
+        return {
+                "success": False,
+                "error": "The dataset contains no rows"
+        }
+
     numeric_df = df.select_dtypes(include="number")
     numeric_columns = numeric_df.columns.to_list()
 
-    if not numeric_columns or numeric_df.empty:
+    if not numeric_columns:
         return {
                 "success": False,
                 "error": "no numeric coloumns found"
