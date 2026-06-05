@@ -1,19 +1,48 @@
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 
 
 def analyze_csv(csv_path: str) -> dict:
-    df = pd.read_csv(csv_path)
+    try:
+        df = pd.read_csv(csv_path)
+    except Exception as e:
+        {
+            "success": False,
+            "error found": f"error trying to read the file {e}"
+        }
+    numeric_df = df.select_dtypes(include="number")
+    numeric_columns = numeric_df.columns.to_list()
 
-    if all(name != "Score" for name in df.to_dict().keys()):
+    if not numeric_columns:
         return {
                 "success": False,
-                "error": "Column 'Score' not found"
+                "error found": "no numeric coloumns found"
         }
     return {
-        "success": True,
-        "data": {
-            "student_count": len(df),
-            "highest_score": df["Score"].max(),
-            "average_score": round(df["Score"].mean(), 2)
-        }
-    }
+            "success": True,
+            "rows": len(df.index),
+            "columns": len(df.columns),
+            "numeric_columns": numeric_columns,
+            "summary": get_summary(df, numeric_columns),
+            "preview": df.head().to_dict()
+    } 
+
+
+def get_summary(df: pd.DataFrame, coloumns: list[str])->dict[str, int|float]:
+    """
+        accepts a csv loaded by pandas as the first argument and 
+        numeric coloumns as the second and returns a summary
+    """
+    summary = {}
+    
+    for coloumn in coloumns:
+        df_not_null = df[coloumn].dropna()
+        summary[coloumn] = {
+                "count": df_not_null.count(),
+                "mean": round(df_not_null.mean(), 2),
+                "min": df_not_null.min(),
+                "max": df_not_null.max(),
+                "median": df_not_null.median(),
+                "number of miising data": df[coloumn].isna().sum()
+            } 
+    return summary
